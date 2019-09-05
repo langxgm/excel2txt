@@ -50,20 +50,25 @@ def create_file(name, rows, header, is_print):
                 if c > 0:
                     file.write("\t")
                 # field data
+                field_name = fields[c]
                 type_name = types[c]
                 field_data = row_data[c]
                 if r < data_begin:
                     file.write(str(field_data))
                 else:
                     if type_name == "STRING":
-                        assert (type(field_data) == str), "data is not a string type file: %s row=%d field_name=%s type_name=%s" % (name, r + 1, field_name, type_name)
+                        assert (type(field_data) == str),\
+                             "data is not a string type file: %s row=%d field_name=%s type_name=%s field_data=%s" % (name, r + 1, field_name, type_name, str(field_data))
                         file.write(field_data)
                     elif type_name == "INT":
-                        assert (type(field_data) == float), "data is not a number type file: %s row=%d field_name=%s type_name=%s" % (name, r + 1, field_name, type_name)
-                        assert (field_data - int(field_data) == 0), "data is not a int type file: %s row=%d field_name=%s type_name=%s" % (name, r + 1, field_name, type_name)
+                        assert (type(field_data) == float),\
+                             "data is not a number type file: %s row=%d field_name=%s type_name=%s field_data=%s" % (name, r + 1, field_name, type_name, str(field_data))
+                        assert (field_data - int(field_data) == 0),\
+                             "data is not a int type file: %s row=%d field_name=%s type_name=%s field_data=%s" % (name, r + 1, field_name, type_name, str(field_data))
                         file.write(str(int(field_data)))
                     elif type_name == "FLOAT":
-                        assert (type(field_data) == float), "data is not a float type file: %s row=%d field_name=%s type_name=%s" % (name, r + 1, field_name, type_name)
+                        assert (type(field_data) == float),\
+                             "data is not a float type file: %s row=%d field_name=%s type_name=%s field_data=%s" % (name, r + 1, field_name, type_name, str(field_data))
                         file.write(str(round(field_data, 4)))
     finally:
         # close file
