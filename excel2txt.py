@@ -105,7 +105,7 @@ def main(argv=None):
         for name in os.listdir(input_dir):
             # excel
             if name.endswith(".xlsx") or name.endswith(".xlsm"):
-                table = xlrd.open_workbook(name)
+                table = xlrd.open_workbook(input_dir + "/" + name)
                 #print("table: ", name)
                 # sheet
                 sheet_num = len(table.sheets())
