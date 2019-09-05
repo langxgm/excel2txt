@@ -11,9 +11,10 @@
             "program": "${file}",
             "console": "integratedTerminal",
             "args": [
-                "-i",".",
-                "-o",".",
-                "-e",".txt"
+                "-i", ".",
+                "-o", ".",
+                "-e", ".txt",
+                "--header", "3",
             ]
         }
     ]
