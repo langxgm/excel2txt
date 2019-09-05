@@ -1,14 +1,9 @@
 #! /usr/bin/python3
 
 import os
+import sys
+import getopt
 import xlrd
-
-current_dir = os.getcwd()
-target_dir = "."
-filename_ext = ".txt"
-
-os.chdir(target_dir)
-print(os.getcwd())
 
 def create_file(name, rows, is_print):
     # remove old file
@@ -71,34 +66,81 @@ def create_file(name, rows, is_print):
     # close file
     file.close()
 
-count = 0
-for name in os.listdir("."):
-    # excel
-    if name.endswith(".xlsx") or name.endswith(".xlsm"):
-        table = xlrd.open_workbook(name)
-        #print("table: ", name)
-        # sheet
-        sheet_num = len(table.sheets())
-        for sheet in table.sheets():
-            #print("sheet: ", sheet.name)
-            count += 1
-            # row count
-            nrows = sheet.nrows
-            # row data
-            rows = []
-            for i in range(nrows):
-                rows.append(sheet.row_values(i))
-            # check header
-            if len(rows) < 3 or (rows[1][0] != "INT" and rows[1][0] != "STRING"):
-                print("[%d] table: %s, sheet: %s, nrows: %d, ignore ! ! ! ! ! !" % (count, name, sheet.name, nrows))
-                continue
-            # create file
-            file_name = name.split(".", 1)[0]
-            if sheet.name.startswith("Sheet") == False:
-                file_name = sheet.name
-            create_file(file_name + filename_ext, rows, False)
-            #print("[%d] table: %s, sheet: %s, nrows: %d, ok." % (count, name, sheet.name, nrows))
+class Usage(Exception):
+    def __init__(self, msg):
+        self.msg = msg
 
-print("excel2txt: ", count)
+def help():
+    print("""
+    Help info
+        -i, --input-dir        input file directory
+        -o, --output-dir       output file directory
+        -e, --filename-ext     filename extension, default is \".txt\"
+    """)
 
-os.system("pause")
+def main(argv=None):
+    if argv is None:
+        argv = sys.argv
+    count = 0
+    try:
+        current_dir = os.getcwd()
+        input_dir = "."
+        output_dir = "."
+        filename_ext = ".txt"
+        try:
+            opts, args = getopt.getopt(argv[1:], "hi:o:e:", ["help", "input-dir=", "output-dir=", "filename-ext="])
+            for opt_name, opt_value in opts:
+                if opt_name in ("-h", "--help"):
+                    help()
+                    return 0
+                elif opt_name in ("-i", "--input-dir"):
+                    input_dir = opt_value
+                elif opt_name in ("-o", "--output-dir"):
+                    output_dir = opt_value
+                elif opt_name in ("-e", "--filename-ext"):
+                    filename_ext = opt_value
+        except getopt.error as msg:
+            raise Usage(msg)
+
+        for name in os.listdir(input_dir):
+            # excel
+            if name.endswith(".xlsx") or name.endswith(".xlsm"):
+                table = xlrd.open_workbook(name)
+                #print("table: ", name)
+                # sheet
+                sheet_num = len(table.sheets())
+                for sheet in table.sheets():
+                    #print("sheet: ", sheet.name)
+                    count += 1
+                    # row count
+                    nrows = sheet.nrows
+                    # row data
+                    rows = []
+                    for i in range(nrows):
+                        rows.append(sheet.row_values(i))
+                    # check header
+                    if len(rows) < 3 or (rows[1][0] != "INT" and rows[1][0] != "STRING"):
+                        print("[%d] table: %s, sheet: %s, nrows: %d, ignore ! ! ! ! ! !" % (count, name, sheet.name, nrows))
+                        continue
+                    # create file
+                    file_name = name.split(".", 1)[0]
+                    if sheet.name.startswith("Sheet") == False:
+                        file_name = sheet.name
+                    create_file(output_dir + "/" + file_name + filename_ext, rows, False)
+                    #print("[%d] table: %s, sheet: %s, nrows: %d, ok." % (count, name, sheet.name, nrows))
+    except Usage as err:
+        print(err.msg)
+        help()
+        os.system("pause")
+        return 2
+    except:
+       print("Unexpected error:", sys.exc_info()[0])
+       os.system("pause")
+       return 2
+
+    print("excel2txt: ", count)
+    os.system("pause")
+    return 0
+
+if __name__ == "__main__":
+    sys.exit(main())
