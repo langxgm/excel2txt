@@ -74,7 +74,10 @@ def create_file(name, rows, header, is_print):
                     elif type_name == "FLOAT":
                         assert (type(field_data) == float), "data is not a float type file: %s row=%d field_name=%s type_name=%s field_data=%s" % (
                             name, r + 1, field_name, type_name, str(field_data))
-                        file.write(str(round(field_data, 4)))
+                        if field_data - int(field_data) == 0:
+                            file.write(str(int(field_data)))
+                        else:
+                            file.write(str(round(field_data, 4)))
                     else:
                         assert False, "unknown type file: %s row=%d field_name=%s type_name=%s field_data=%s" % (
                             name, r + 1, field_name, type_name, str(field_data))
