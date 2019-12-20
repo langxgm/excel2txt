@@ -17,6 +17,7 @@ def create_file(name, rows, header, is_print):
     fields = rows[0]
     types = rows[1]
     descs = rows[2]
+    # descs[0] = fields[0] + "_Desc"  # the first column is in english
     if is_print:
         print("create file: ", name)
         print("fields: ", fields)
