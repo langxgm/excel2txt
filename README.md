@@ -3,7 +3,7 @@
 
 ## install
 1. [python]
-2. pip install xlrd
+2. pip install xlrd==1.2.0
 
 ## output
 ### excel
